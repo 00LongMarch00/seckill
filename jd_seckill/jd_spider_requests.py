@@ -294,7 +294,8 @@ class JdTdudfp:
         return self.jd_tdudfp.get(key) if self.jd_tdudfp else None
 
     async def _get(self):
-        jd_tdudfp = None
+        jd_tdudfp = None;
+        return jd_tdudfp;
         try:
             from pyppeteer import launch
             url = "https://www.jd.com/"
@@ -424,7 +425,7 @@ class JdSeckill(object):
         self._seckill()
 
     @check_login_and_jdtdufp
-    def seckill_by_proc_pool(self, work_count=5):
+    def seckill_by_proc_pool(self, work_count=3):
         """
         多进程进行抢购
         work_count：进程数量
@@ -640,13 +641,14 @@ class JdSeckill(object):
         self.seckill_init_info[self.sku_id] = self._get_seckill_init_info()
         init_info = self.seckill_init_info.get(self.sku_id)
         default_address = init_info['addressList'][0]  # 默认地址dict
+        logger.info("default_address：%s", default_address)
         invoice_info = init_info.get('invoiceInfo', {})  # 默认发票信息dict, 有可能不返回
         token = init_info['token']
         data = {
             'skuId': self.sku_id,
             'num': self.seckill_num,
             'addressId': default_address['id'],
-            'yuShou': 'true',
+            'yuShou': 'false',
             'isModifyAddress': 'false',
             'name': default_address['name'],
             'provinceId': default_address['provinceId'],
@@ -675,7 +677,11 @@ class JdSeckill(object):
             'eid': self.jd_tdufp.get("eid") if self.jd_tdufp.get("eid") else global_config.getRaw('config', 'eid'),
             'fp': self.jd_tdufp.get("fp") if self.jd_tdufp.get("fp") else global_config.getRaw('config', 'fp'),
             'token': token,
-            'pru': ''
+            'pru': '',
+            'provinceName': default_address['provinceName'],
+            'cityName': default_address['cityName'],
+            'countyName': default_address['countyName'],
+            'townName': default_address['townName'],
         }
         logger.info("order_date：%s", data)
         return data

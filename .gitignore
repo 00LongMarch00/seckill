@@ -122,3 +122,6 @@ qr_code.png
 .ipynb_checkpoints
 /test/
 /.user_data/
+
+config.ini
+config.ini*
